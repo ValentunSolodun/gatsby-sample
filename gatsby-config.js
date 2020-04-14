@@ -5,6 +5,24 @@ module.exports = {
     author: `@gatsbyjs`,
   },
   plugins: [
+    {
+      resolve: `gatsby-source-mysql`,
+      options: {
+        connectionDetails: {
+          host: 'localhost',
+          user: 'root',
+          password: '12345',
+          database: 'to-do'
+        },
+        queries: [
+          {
+            statement: 'SELECT * FROM lists',
+            idFieldName: 'id',
+            name: 'Todo'
+          }
+        ]
+      }
+    },
     `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-source-filesystem`,
