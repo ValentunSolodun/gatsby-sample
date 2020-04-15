@@ -16,15 +16,12 @@ const getAllTodo = async (graphql) => {
     }
   `)
   return nodes;
-  // const response = await fetch("https://jsonplaceholder.typicode.com/todos")
-  // return await response.json()
 }
 
 
 exports.createPages = async ({actions, graphql}) => {
   const toDoList = await getAllTodo(graphql);
   toDoList.forEach(item => {
-    console.log(item);
     actions.createPage({
       path: `/item/${item.id}`,
       component: require.resolve(`./src/templates/all-todo.js`),

@@ -1,7 +1,8 @@
-import React from "react"
+import React, {useState} from "react"
 import { List } from "semantic-ui-react"
 import { ListItemComponent } from "../ListItem/ListItem"
-import { getAllTodo } from "../../actions"
+import {Button} from "semantic-ui-react"
+import {addToDo} from "../../actions"
 import { useStaticQuery, graphql } from "gatsby"
 import _ from "lodash"
 
@@ -17,12 +18,17 @@ const ListComponent = () => {
       }
     }
   `)
+  let [list, setList] = useState(nodes);
+  console.log(list);
   return (
-    <List divided relaxed>
-      {
-        _.map(nodes, (item) => <ListItemComponent key={item.id} item={item}/>)
-      }
-    </List>
+    <React.Fragment>
+      <List divided relaxed>
+        {
+          _.map(list, (item) => <ListItemComponent setList={setList} key={item.id} item={item}/>)
+        }
+      </List>
+      <Button primary onClick={() => setList(addToDo.bind(null, prompt('Input title', 'default')))}>Add task</Button>
+    </React.Fragment>
   )
 }
 

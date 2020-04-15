@@ -1,8 +1,9 @@
 import React from "react";
 import {Link} from "gatsby"
-import { ListContent, ListDescription, ListHeader, ListItem, Checkbox } from "semantic-ui-react"
+import { ListContent, ListDescription, ListHeader, ListItem, Checkbox, Button } from "semantic-ui-react"
+import {removeTodo} from "../../actions"
 
-const ListItemComponent = ({item}) => {
+const ListItemComponent = ({item, setList}) => {
   return (
     <ListItem>
       <ListContent>
@@ -10,6 +11,7 @@ const ListItemComponent = ({item}) => {
         <ListDescription>{item.description}</ListDescription>
         <Checkbox defaultChecked={item.done}/>
       </ListContent>
+      <Button size='mini' color='red' onClick={() => setList(removeTodo.bind(null, item.id))}>Remove</Button>
     </ListItem>
   )
 }
