@@ -1,41 +1,37 @@
 const fetch = require(`node-fetch`)
-const { graphql } = "gatsby";
+const axios = require('axios');
+const _ = require("lodash");
 
-const getAllTodo = async (graphql) => {
-
-  let { data: {allMysqlTodo: { nodes }}} = await graphql(`
-    {
-      allMysqlTodo {
-        nodes {
-          id
-          text
-          done
-          mysqlId
-        }
-      }
-    }
-  `)
-  return nodes;
+const getAllTodo = async () => {
+  const response = await axios.get('http://localhost:3001/');
+  return response.data;
 }
 
 
-exports.createPages = async ({actions, graphql}) => {
-  const toDoList = await getAllTodo(graphql);
+exports.createPages = async ({ actions, graphql }) => {
+  const toDoList = await getAllTodo();
+  actions.createPage({
+    path: `/login`,
+    component: require.resolve(`./src/templates/login-page.js`),
+  });
+  actions.createPage({
+    path: `/register`,
+    component: require.resolve(`./src/templates/register-page.js`),
+  });
   toDoList.forEach(item => {
     actions.createPage({
       path: `/item/${item.id}`,
       component: require.resolve(`./src/templates/all-todo.js`),
-      context: { item },
+      context: {item}
     })
-  })
+  });
 
 }
 
 exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => {
-  const toDoList = await getAllTodo(graphql);
-  // console.log(toDoList)
+  const toDoList = await getAllTodo();
   actions.createNode({
-    list: toDoList,
+    list: !_.isEmpty(toDoList) ? toDoList : [],
     id: `build-time-data`,
     parent: null,
     children: [],
@@ -43,5 +39,5 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
       type: `Todo`,
       contentDigest: createContentDigest(toDoList),
     },
-  })
+  });
 }

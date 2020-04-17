@@ -10,6 +10,9 @@ List.init({
     },
     done: {
         type: Sequelize.BOOLEAN
+    },
+    userId: {
+        type: Sequelize.INTEGER
     }
 }, {
     sequelize,

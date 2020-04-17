@@ -1,25 +1,39 @@
-import React, {useState} from "react"
+import React, { useState, useEffect } from "react"
+import { useMount } from "@umijs/hooks"
 import { List } from "semantic-ui-react"
 import { ListItemComponent } from "../ListItem/ListItem"
-import {Button} from "semantic-ui-react"
-import {addToDo} from "../../actions"
+import { Button } from "semantic-ui-react"
+import { getAllTodo, addTodo } from "../../actions"
 import { useStaticQuery, graphql } from "gatsby"
 import _ from "lodash"
 
 const ListComponent = () => {
-  let { allMysqlTodo: { nodes } } = useStaticQuery(graphql`
+
+  const {allTodo: {nodes}} = useStaticQuery(graphql`
     query MyQuery {
-      allMysqlTodo {
+      allTodo {
         nodes {
-          id
-          text
-          done
+          list {
+            id
+            name
+            done
+          }
         }
       }
     }
+
   `)
-  let [list, setList] = useState(nodes);
-  console.log(list);
+
+  const [list, setList] = useState([]);
+  useMount(() => {
+    setList(nodes[0].list);
+    // getAllTodo().then(response => setList(response.data))
+  });
+
+  const handlerAddToDo = (value) => {
+    addTodo(value).then((response) => setList(prevState => [...prevState, {...response.data}]))
+  };
+
   return (
     <React.Fragment>
       <List divided relaxed>
@@ -27,7 +41,7 @@ const ListComponent = () => {
           _.map(list, (item) => <ListItemComponent setList={setList} key={item.id} item={item}/>)
         }
       </List>
-      <Button primary onClick={() => setList(addToDo.bind(null, prompt('Input title', 'default')))}>Add task</Button>
+      <Button onClick={() => handlerAddToDo(prompt("Title", ""))} primary>Add task</Button>
     </React.Fragment>
   )
 }

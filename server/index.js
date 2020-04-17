@@ -5,6 +5,7 @@ const List = require('./models/List');
 const config = require('./config');
 const db = require('./db/database');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const Users = require("./routes/user.router");
 const bodyParser = require('body-parser')
 
@@ -14,20 +15,20 @@ app.use(bodyParser.json())
 
 app.use('/users', Users);
 
-app.use('/', (req, res, next) => {
+// app.use('/', (req, res, next) => {
 
-  let token = req.headers.token;
+//   let token = req.headers.token;
 
-  jwt.verify(token, config.secret, (err, data) => {
-    if (err) {
-      res.sendStatus(401);
-    } else {
-      req.user = data;
-      next();
-    }
+//   jwt.verify(token, config.secret, (err, data) => {
+//     if (err) {
+//       res.sendStatus(401);
+//     } else {
+//       req.user = data;
+//       next();
+//     }
 
-  });
-});
+//   });
+// });
 
 app.get('/', async (req, res) => {
   let data = await List.findAll();
@@ -40,25 +41,26 @@ app.post('/', async (req, res) => {
 
   let data = await List.create({
     name,
-    done: false
+    done: false,
   });
 
   res.send(data);
 });
 
 app.delete('/', async (req, res) => {
-  let {id} = req.body;
+  let {id} = req.query;
 
   let data = await List.destroy({where: {id}});
 
-  res.send(data);
+  res.sendStatus(200);
 });
 
 app.put('/', async (req, res) => {
 
+  console.log(req.body);
   let {id, done} = req.body;
 
-  let data = await List.update({done}, {where:{id}});
+  await List.update({done}, {where:{id}});
   res.sendStatus(200);
 });
 

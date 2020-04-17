@@ -4,7 +4,7 @@ const users = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
-const { Users } = require('../models/user.model');
+const Users = require('../models/user.model');
 
 users.post('/register', (req, res) => {
   console.log(req.body);
@@ -21,7 +21,7 @@ users.post('/register', (req, res) => {
         if (result.length) res.send('User is already exist').sendStatus(403);
         else {
           Users.create({
-            name: userObj.name,
+            username: userObj.name,
             email: userObj.email,
             password: hash
           })
